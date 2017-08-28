@@ -1,0 +1,15 @@
+pipeline:
+  publish:
+    image: plugins/docker:1
+    repo: plugins/base
+    tags: [ multiarch ]
+    secrets: [ docker_username, docker_password ]
+    when:
+      branch: master
+      event: push
+
+  microbadger:
+    image: plugins/webhook
+    secrets: [ webhook_url ]
+    when:
+      status: [ success ]

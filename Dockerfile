@@ -2,7 +2,7 @@ FROM alpine:3.6 as alpine
 RUN apk add -U --no-cache ca-certificates mailcap
 
 FROM scratch
-MAINTAINER Drone.IO Community <brad@drone.io>
+MAINTAINER Drone.IO Community <drone-dev@googlegroups.com>
 
 COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=alpine /etc/mime.types /etc/

@@ -6,7 +6,7 @@ pipeline:
     tags: [ amd64 ]
     secrets: [ docker_username, docker_password ]
     when:
-      branch: master
+      branch: amd64
       event: push
 
   microbadger:

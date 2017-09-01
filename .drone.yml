@@ -1,6 +1,7 @@
 pipeline:
   publish:
-    image: plugins/docker:1
+    image: plugins/docker:17.05
+    pull: true
     repo: plugins/base
     tags: [ multiarch ]
     secrets: [ docker_username, docker_password ]
@@ -9,7 +10,8 @@ pipeline:
       event: push
 
   microbadger:
-    image: plugins/webhook
+    image: plugins/webhook:1
+    pull: true
     secrets: [ webhook_url ]
     when:
       status: [ success ]

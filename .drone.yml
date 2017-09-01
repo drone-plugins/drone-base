@@ -1,0 +1,17 @@
+pipeline:
+  publish:
+    image: plugins/docker:17.05
+    pull: true
+    repo: plugins/base
+    tags: [ amd64 ]
+    secrets: [ docker_username, docker_password ]
+    when:
+      branch: master
+      event: push
+
+  microbadger:
+    image: plugins/webhook:1
+    pull: true
+    secrets: [ webhook_url ]
+    when:
+      status: [ success ]

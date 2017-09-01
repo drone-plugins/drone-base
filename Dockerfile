@@ -4,6 +4,8 @@ RUN apk add -U --no-cache ca-certificates mailcap
 FROM scratch
 MAINTAINER Drone.IO Community <drone-dev@googlegroups.com>
 
+ENV GODEBUG=netdns=go
+
 COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=alpine /etc/mime.types /etc/
 

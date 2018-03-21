@@ -1,4 +1,4 @@
-FROM alpine:3.6
+FROM alpine:3.7
 MAINTAINER Drone.IO Community <drone-dev@googlegroups.com>
 
 ENV GODEBUG=netdns=go

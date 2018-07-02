@@ -1,3 +1,10 @@
+workspace:
+  base: /go
+  path: src/github.com/drone-plugins/drone-base
+
+branches:
+  - master
+
 pipeline:
   publish:
     image: plugins/docker:17.05

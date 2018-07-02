@@ -13,7 +13,6 @@ pipeline:
     tags: [ multiarch ]
     secrets: [ docker_username, docker_password ]
     when:
-      branch: master
       event: push
 
   microbadger:
@@ -21,6 +20,5 @@ pipeline:
     pull: true
     secrets: [ webhook_url ]
     when:
-      branch: master
       event: push
       status: [ success ]

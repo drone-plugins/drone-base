@@ -1,4 +1,4 @@
-FROM alpine:3.7 as alpine
+FROM alpine:3.8 as alpine
 RUN apk add --no-cache ca-certificates mailcap
 
 FROM scratch

@@ -7,3 +7,39 @@
 [![](https://images.microbadger.com/badges/image/plugins/base.svg)](https://microbadger.com/images/plugins/base "Get your own image badge on microbadger.com")
 
 This repository is used to build the base images for our plugins. It just adds a general `/etc/ssl/certs/ca-certificates.crt` and `/etc/mime.types` to an Alpine or a Scratch image depending on the tag.
+
+## Docker
+
+Build the Docker images with the following commands:
+
+```
+docker build \
+  --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+  --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
+  --file docker/Dockerfile.linux.multiarch
+  --tag plugins/base:multiarch .
+
+docker build \
+  --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+  --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
+  --file docker/Dockerfile.linux.amd64
+  --tag plugins/base:linux-amd64 .
+
+docker build \
+  --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+  --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
+  --file docker/Dockerfile.linux.arm64
+  --tag plugins/base:linux-arm64 .
+
+docker build \
+  --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+  --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
+  --file docker/Dockerfile.linux.arm
+  --tag plugins/base:linux-arm .
+
+docker build \
+  --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+  --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
+  --file docker/Dockerfile.windows.amd64
+  --tag plugins/base:windows-amd64 .
+```

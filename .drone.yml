@@ -1,24 +1,225 @@
-workspace:
-  base: /go
-  path: src/github.com/drone-plugins/drone-base
+---
+kind: pipeline
+name: linux-amd64
 
-branches:
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: dryrun
+  pull: always
+  image: plugins/docker:linux-amd64
+  settings:
+    dockerfile: docker/Dockerfile.linux.amd64
+    dry_run: true
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    tags: linux-amd64
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - pull_request
+
+- name: publish
+  pull: always
+  image: plugins/docker:linux-amd64
+  settings:
+    auto_tag: true
+    auto_tag_suffix: linux-amd64
+    dockerfile: docker/Dockerfile.linux.amd64
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - push
+
+trigger:
+  branch:
   - master
 
-pipeline:
-  publish:
-    image: plugins/docker:17.05
-    pull: true
-    repo: plugins/base
-    tags: [ multiarch ]
-    secrets: [ docker_username, docker_password ]
-    when:
-      event: push
+---
+kind: pipeline
+name: linux-arm64
 
-  microbadger:
-    image: plugins/webhook:1
-    pull: true
-    secrets: [ webhook_url ]
-    when:
-      event: push
-      status: [ success ]
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: dryrun
+  pull: always
+  image: plugins/docker:linux-arm64
+  settings:
+    dockerfile: docker/Dockerfile.linux.arm64
+    dry_run: true
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    tags: linux-arm64
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - pull_request
+
+- name: publish
+  pull: always
+  image: plugins/docker:linux-arm64
+  settings:
+    auto_tag: true
+    auto_tag_suffix: linux-arm64
+    dockerfile: docker/Dockerfile.linux.arm64
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - push
+
+trigger:
+  branch:
+  - master
+
+---
+kind: pipeline
+name: linux-arm
+
+platform:
+  os: linux
+  arch: arm
+
+steps:
+- name: dryrun
+  pull: always
+  image: plugins/docker:linux-arm
+  settings:
+    dockerfile: docker/Dockerfile.linux.arm
+    dry_run: true
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    tags: linux-arm
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - pull_request
+
+- name: publish
+  pull: always
+  image: plugins/docker:linux-arm
+  settings:
+    auto_tag: true
+    auto_tag_suffix: linux-arm
+    dockerfile: docker/Dockerfile.linux.arm
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - push
+
+trigger:
+  branch:
+  - master
+
+---
+kind: pipeline
+name: linux-multiarch
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: dryrun
+  pull: always
+  image: plugins/docker:linux-amd64
+  settings:
+    dockerfile: docker/Dockerfile.linux.multiarch
+    dry_run: true
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    tags:
+    - multiarch
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - pull_request
+
+- name: publish
+  pull: always
+  image: plugins/docker:linux-amd64
+  settings:
+    dockerfile: docker/Dockerfile.linux.multiarch
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    tags:
+    - multiarch
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - push
+
+trigger:
+  branch:
+  - master
+
+---
+kind: pipeline
+name: notifications
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: manifest
+  pull: always
+  image: plugins/manifest:1
+  settings:
+    ignore_missing: true
+    password:
+      from_secret: docker_password
+    spec: docker/manifest.tmpl
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - push
+
+- name: microbadger
+  pull: always
+  image: plugins/webhook:1
+  settings:
+    url:
+      from_secret: microbadger_url
+  when:
+    event:
+    - push
+
+trigger:
+  branch:
+  - master
+
+depends_on:
+- linux-amd64
+- linux-arm64
+- linux-arm
+- linux-multiarch
+
+...

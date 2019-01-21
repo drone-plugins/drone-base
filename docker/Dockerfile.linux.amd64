@@ -1,0 +1,9 @@
+FROM alpine:3.8
+RUN apk add --no-cache ca-certificates mailcap
+
+LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" \
+  org.label-schema.name="Drone Base" \
+  org.label-schema.vendor="Drone.IO Community" \
+  org.label-schema.schema-version="1.0"
+
+ENV GODEBUG=netdns=go

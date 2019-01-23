@@ -1,5 +1,62 @@
 ---
 kind: pipeline
+name: windows-1803
+
+platform:
+  os: windows
+  arch: amd64
+  version: 1803
+
+steps:
+- name: dryrun
+  pull: always
+  image: plugins/docker:windows-1803
+  settings:
+    dockerfile: docker/Dockerfile.windows.1803
+    dry_run: true
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    tags: windows-1803
+    username:
+      from_secret: docker_username
+  volumes:
+  - name: docker_pipe
+    path: //./pipe/docker_engine
+  when:
+    event:
+    - pull_request
+
+- name: publish
+  pull: always
+  image: plugins/docker:windows-1803
+  settings:
+    auto_tag: true
+    auto_tag_suffix: windows-1803
+    dockerfile: docker/Dockerfile.windows.1803
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    username:
+      from_secret: docker_username
+  volumes:
+  - name: docker_pipe
+    path: //./pipe/docker_engine
+  when:
+    event:
+    - push
+
+volumes:
+- name: docker_pipe
+  host:
+    path: //./pipe/docker_engine
+
+trigger:
+  branch:
+  - master
+
+---
+kind: pipeline
 name: windows-1809
 
 platform:
@@ -20,6 +77,9 @@ steps:
     tags: windows-1809
     username:
       from_secret: docker_username
+  volumes:
+  - name: docker_pipe
+    path: //./pipe/docker_engine
   when:
     event:
     - pull_request
@@ -36,6 +96,52 @@ steps:
     repo: plugins/base
     username:
       from_secret: docker_username
+  volumes:
+  - name: docker_pipe
+    path: //./pipe/docker_engine
+  when:
+    event:
+    - push
+
+volumes:
+- name: docker_pipe
+  host:
+    path: //./pipe/docker_engine
+
+trigger:
+  branch:
+  - master
+
+---
+kind: pipeline
+name: notifications
+
+platform:
+  os: windows
+  arch: amd64
+  version: 1809
+
+steps:
+- name: manifest
+  pull: always
+  image: plugins/manifest:windows-1809
+  settings:
+    ignore_missing: true
+    password:
+      from_secret: docker_password
+    spec: docker/manifest.tmpl
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - push
+
+- name: microbadger
+  pull: always
+  image: plugins/webhook:windows-1809
+  settings:
+    url:
+      from_secret: microbadger_url
   when:
     event:
     - push
@@ -43,3 +149,9 @@ steps:
 trigger:
   branch:
   - master
+
+depends_on:
+- windows-1803
+- windows-1809
+
+...

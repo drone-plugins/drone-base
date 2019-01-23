@@ -190,7 +190,7 @@ platform:
 steps:
 - name: manifest
   pull: always
-  image: plugins/manifest:1
+  image: plugins/manifest:linux-amd64
   settings:
     ignore_missing: true
     password:
@@ -204,7 +204,7 @@ steps:
 
 - name: microbadger
   pull: always
-  image: plugins/webhook:1
+  image: plugins/webhook:linux-amd64
   settings:
     url:
       from_secret: microbadger_url
@@ -215,11 +215,5 @@ steps:
 trigger:
   branch:
   - master
-
-depends_on:
-- linux-amd64
-- linux-arm64
-- linux-arm
-- linux-multiarch
 
 ...

@@ -50,5 +50,10 @@ local PipelineMultiarch = {
   pipeline.build('linux', 'arm64'),
   pipeline.build('linux', 'arm'),
   PipelineMultiarch,
-  pipeline.notifications(),
+  pipeline.notifications(depends_on=[
+    'linux-amd64',
+    'linux-arm64',
+    'linux-arm',
+    'linux-multiarch',
+  ]),
 ]

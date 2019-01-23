@@ -54,7 +54,6 @@
     },
 
   notifications(os='linux', arch='amd64', version='', depends_on=[])::
-    local tag = if os == 'windows' then os + '-' + version else os + '-' + arch;
     {
       kind: 'pipeline',
       name: 'notifications',
@@ -66,7 +65,7 @@
       steps: [
         {
           name: 'manifest',
-          image: 'plugins/manifest:' + tag,
+          image: 'plugins/manifest:1',
           pull: 'always',
           settings: {
             username: { from_secret: 'docker_username' },
@@ -80,7 +79,7 @@
         },
         {
           name: 'microbadger',
-          image: 'plugins/webhook:' + tag,
+          image: 'plugins/webhook:1',
           pull: 'always',
           settings: {
             url: { from_secret: 'microbadger_url' },

@@ -124,7 +124,7 @@ platform:
 steps:
 - name: manifest
   pull: always
-  image: plugins/manifest:windows-1809
+  image: plugins/manifest:1
   settings:
     ignore_missing: true
     password:
@@ -138,7 +138,7 @@ steps:
 
 - name: microbadger
   pull: always
-  image: plugins/webhook:windows-1809
+  image: plugins/webhook:1
   settings:
     url:
       from_secret: microbadger_url

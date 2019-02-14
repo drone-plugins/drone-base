@@ -4,7 +4,12 @@
   ],
   "docker": {
     "fileMatch": [
-      "/docker/Dockerfile"
+      "/docker/Dockerfile.linux.multiarch",
+      "/docker/Dockerfile.linux.amd64",
+      "/docker/Dockerfile.linux.arm",
+      "/docker/Dockerfile.linux.arm64",
+      "/docker/Dockerfile.windows.1803",
+      "/docker/Dockerfile.windows.1809"
     ]
   },
   "labels": [

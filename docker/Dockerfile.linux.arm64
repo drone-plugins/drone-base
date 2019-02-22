@@ -1,4 +1,4 @@
-FROM alpine:3.8
+FROM alpine:3.9
 RUN apk add --no-cache ca-certificates mailcap
 
 LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" \

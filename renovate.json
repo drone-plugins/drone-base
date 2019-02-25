@@ -4,7 +4,7 @@
   ],
   "docker": {
     "fileMatch": [
-      "/docker/Dockerfile"
+      "docker/Dockerfile.*",
     ]
   },
   "labels": [

@@ -2,10 +2,12 @@
   "extends": [
     "config:base"
   ],
-  "docker": {
+  "dockerfile": {
     "fileMatch": [
-      "docker/Dockerfile.*"
-    ]
+      "docker/Dockerfile\\.linux\\.(arm|arm64|amd64|multiarch)",
+      "docker/Dockerfile\\.windows\\.(1803|1809)"
+    ],
+    "pinDigests": true
   },
   "labels": [
     "renovate"

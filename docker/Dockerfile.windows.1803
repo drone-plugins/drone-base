@@ -1,5 +1,5 @@
 # escape=`
-FROM mcr.microsoft.com/powershell:nanoserver-1803@sha256:fdaf78a893096fde9e1f7803520409d82b3972671ede33b037eb1f1ebd386d16
+FROM mcr.microsoft.com/powershell:nanoserver-1803@sha256:ba08a2c3e145d6638588319726587d1669a8f52607ec8f4af9d7adfa5ae29523
 
 LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" `
   org.label-schema.name="Drone Base" `

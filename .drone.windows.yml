@@ -12,6 +12,7 @@ steps:
   pull: always
   image: plugins/docker:windows-1803
   settings:
+    daemon_off: true
     dockerfile: docker/Dockerfile.windows.1803
     dry_run: true
     password:
@@ -22,7 +23,7 @@ steps:
       from_secret: docker_username
   volumes:
   - name: docker_pipe
-    path: //./pipe/docker_engine
+    path: \\\\.\\pipe\\docker_engine
   when:
     event:
     - pull_request
@@ -33,6 +34,7 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: windows-1803
+    daemon_off: true
     dockerfile: docker/Dockerfile.windows.1803
     password:
       from_secret: docker_password
@@ -41,19 +43,22 @@ steps:
       from_secret: docker_username
   volumes:
   - name: docker_pipe
-    path: //./pipe/docker_engine
+    path: \\\\.\\pipe\\docker_engine
   when:
     event:
-    - push
+      exclude:
+      - pull_request
 
 volumes:
 - name: docker_pipe
   host:
-    path: //./pipe/docker_engine
+    path: \\\\.\\pipe\\docker_engine
 
 trigger:
-  branch:
-  - master
+  ref:
+  - refs/heads/master
+  - "refs/tags/**"
+  - "refs/pull/**"
 
 ---
 kind: pipeline
@@ -69,6 +74,7 @@ steps:
   pull: always
   image: plugins/docker:windows-1809
   settings:
+    daemon_off: true
     dockerfile: docker/Dockerfile.windows.1809
     dry_run: true
     password:
@@ -79,7 +85,7 @@ steps:
       from_secret: docker_username
   volumes:
   - name: docker_pipe
-    path: //./pipe/docker_engine
+    path: \\\\.\\pipe\\docker_engine
   when:
     event:
     - pull_request
@@ -90,6 +96,7 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: windows-1809
+    daemon_off: true
     dockerfile: docker/Dockerfile.windows.1809
     password:
       from_secret: docker_password
@@ -98,19 +105,22 @@ steps:
       from_secret: docker_username
   volumes:
   - name: docker_pipe
-    path: //./pipe/docker_engine
+    path: \\\\.\\pipe\\docker_engine
   when:
     event:
-    - push
+      exclude:
+      - pull_request
 
 volumes:
 - name: docker_pipe
   host:
-    path: //./pipe/docker_engine
+    path: \\\\.\\pipe\\docker_engine
 
 trigger:
-  branch:
-  - master
+  ref:
+  - refs/heads/master
+  - "refs/tags/**"
+  - "refs/pull/**"
 
 ---
 kind: pipeline
@@ -124,31 +134,27 @@ platform:
 steps:
 - name: manifest
   pull: always
-  image: plugins/manifest:1
+  image: plugins/manifest
   settings:
+    auto_tag: true
     ignore_missing: true
     password:
       from_secret: docker_password
     spec: docker/manifest.tmpl
     username:
       from_secret: docker_username
-  when:
-    event:
-    - push
 
 - name: microbadger
   pull: always
-  image: plugins/webhook:1
+  image: plugins/webhook
   settings:
-    url:
+    urls:
       from_secret: microbadger_url
-  when:
-    event:
-    - push
 
 trigger:
-  branch:
-  - master
+  ref:
+  - refs/heads/master
+  - "refs/tags/**"
 
 depends_on:
 - windows-1803

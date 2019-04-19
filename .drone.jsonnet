@@ -1,4 +1,5 @@
 local pipeline = import 'pipeline.libsonnet';
+local name = 'drone-base';
 
 local PipelineMultiarch = {
   kind: 'pipeline',
@@ -46,9 +47,9 @@ local PipelineMultiarch = {
 };
 
 [
-  pipeline.build('linux', 'amd64'),
-  pipeline.build('linux', 'arm64'),
-  pipeline.build('linux', 'arm'),
+  pipeline.build(name, 'linux', 'amd64'),
+  pipeline.build(name, 'linux', 'arm64'),
+  pipeline.build(name, 'linux', 'arm'),
   PipelineMultiarch,
   pipeline.notifications(depends_on=[
     'linux-amd64',

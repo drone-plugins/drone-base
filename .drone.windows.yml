@@ -10,38 +10,42 @@ platform:
 steps:
 - name: dryrun
   pull: always
-  image: plugins/docker:windows-1803
+  image: plugins/docker
   settings:
+    daemon_off: true
     dockerfile: docker/Dockerfile.windows.1803
     dry_run: true
     password:
       from_secret: docker_password
+    purge: false
     repo: plugins/base
-    tags: windows-1803
+    tags: windows-1803-amd64
     username:
       from_secret: docker_username
   volumes:
   - name: docker_pipe
-    path: //./pipe/docker_engine
+    path: \\\\.\\pipe\\docker_engine
   when:
     event:
     - pull_request
 
 - name: publish
   pull: always
-  image: plugins/docker:windows-1803
+  image: plugins/docker
   settings:
     auto_tag: true
-    auto_tag_suffix: windows-1803
+    auto_tag_suffix: windows-1803-amd64
+    daemon_off: true
     dockerfile: docker/Dockerfile.windows.1803
     password:
       from_secret: docker_password
+    purge: false
     repo: plugins/base
     username:
       from_secret: docker_username
   volumes:
   - name: docker_pipe
-    path: //./pipe/docker_engine
+    path: \\\\.\\pipe\\docker_engine
   when:
     event:
     - push
@@ -49,7 +53,7 @@ steps:
 volumes:
 - name: docker_pipe
   host:
-    path: //./pipe/docker_engine
+    path: \\\\.\\pipe\\docker_engine
 
 trigger:
   branch:
@@ -67,38 +71,42 @@ platform:
 steps:
 - name: dryrun
   pull: always
-  image: plugins/docker:windows-1809
+  image: plugins/docker
   settings:
+    daemon_off: true
     dockerfile: docker/Dockerfile.windows.1809
     dry_run: true
     password:
       from_secret: docker_password
+    purge: false
     repo: plugins/base
-    tags: windows-1809
+    tags: windows-1809-amd64
     username:
       from_secret: docker_username
   volumes:
   - name: docker_pipe
-    path: //./pipe/docker_engine
+    path: \\\\.\\pipe\\docker_engine
   when:
     event:
     - pull_request
 
 - name: publish
   pull: always
-  image: plugins/docker:windows-1809
+  image: plugins/docker
   settings:
     auto_tag: true
-    auto_tag_suffix: windows-1809
+    auto_tag_suffix: windows-1809-amd64
+    daemon_off: true
     dockerfile: docker/Dockerfile.windows.1809
     password:
       from_secret: docker_password
+    purge: false
     repo: plugins/base
     username:
       from_secret: docker_username
   volumes:
   - name: docker_pipe
-    path: //./pipe/docker_engine
+    path: \\\\.\\pipe\\docker_engine
   when:
     event:
     - push
@@ -106,7 +114,7 @@ steps:
 volumes:
 - name: docker_pipe
   host:
-    path: //./pipe/docker_engine
+    path: \\\\.\\pipe\\docker_engine
 
 trigger:
   branch:
@@ -124,7 +132,7 @@ platform:
 steps:
 - name: manifest
   pull: always
-  image: plugins/manifest:1
+  image: plugins/manifest
   settings:
     ignore_missing: true
     password:
@@ -138,7 +146,7 @@ steps:
 
 - name: microbadger
   pull: always
-  image: plugins/webhook:1
+  image: plugins/webhook
   settings:
     url:
       from_secret: microbadger_url

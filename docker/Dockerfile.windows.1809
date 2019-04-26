@@ -1,10 +1,9 @@
 # escape=`
-FROM mcr.microsoft.com/powershell:nanoserver-1809@sha256:73ea1ebead93be78b96d23fce659658cf8d8e7ca382471e4f40ee9bb355a2d5f
+FROM mcr.microsoft.com/windows/servercore:1809@sha256:8d9b3f92bf3ca6660df64537753788d589d401ff088ac6f492505c7bfa98733b
 
 LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" `
   org.label-schema.name="Drone Base" `
   org.label-schema.vendor="Drone.IO Community" `
   org.label-schema.schema-version="1.0"
 
-USER ContainerAdministrator
-SHELL ["pwsh", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]

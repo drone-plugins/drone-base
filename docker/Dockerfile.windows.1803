@@ -7,4 +7,6 @@ LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" `
   org.label-schema.schema-version="1.0"
 
 USER ContainerAdministrator
+RUN setx /M PATH "%PATH%;C:\Program Files\PowerShell"
+
 SHELL ["pwsh", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]

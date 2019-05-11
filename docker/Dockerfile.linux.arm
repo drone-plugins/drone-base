@@ -1,4 +1,4 @@
-FROM alpine:3.9@sha256:0162b49bad791c42e60b5ba3c82bfc11d2ec84bec34fed86368885b6955995a2
+FROM alpine:3.9@sha256:587af1f53772e99d764aaced9698759008156aa7862e15fd232d974b05bb4b36
 RUN apk add --no-cache ca-certificates mailcap
 
 LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" \

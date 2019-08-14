@@ -2,11 +2,11 @@ def main(ctx):
   stages = [
     multiarch(),
     linux('amd64'),
-    linux('arm'),
     linux('arm64'),
-    windows('1903'),
-    windows('1809'),
-    windows('1803'),
+    linux('arm'),
+    # windows('1903'),
+    # windows('1809'),
+    # windows('1803'),
   ]
 
   after = manifest() + gitter()
@@ -241,6 +241,16 @@ def manifest():
           'ignore_missing': 'true',
         },
       },
+      {
+        'name': 'microbadger',
+        'image': 'plugins/webhook',
+        'pull': 'always',
+        'settings': {
+          'urls': {
+            'from_secret': 'microbadger_url'
+          }
+        },
+      }
     ],
     'depends_on': [],
     'trigger': {
@@ -256,6 +266,9 @@ def gitter():
     'kind': 'pipeline',
     'type': 'docker',
     'name': 'gitter',
+    'clone': {
+      'disable': True
+    },
     'steps': [
       {
         'name': 'gitter',
@@ -272,6 +285,11 @@ def gitter():
       'manifest'
     ],
     'trigger': {
+      'ref': [
+        'refs/heads/master',
+        'refs/tags/**',
+        'refs/pull/**'
+      ],
       'status': [
         'failure'
       ]

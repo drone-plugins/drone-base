@@ -98,6 +98,55 @@ trigger:
 ---
 kind: pipeline
 type: docker
+name: linux-arm64
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: dryrun
+  pull: always
+  image: plugins/docker
+  settings:
+    dockerfile: docker/Dockerfile.linux.arm64
+    dry_run: true
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    tags: linux-arm64
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - pull_request
+
+- name: publish
+  pull: always
+  image: plugins/docker
+  settings:
+    auto_tag: true
+    auto_tag_suffix: linux-arm64
+    dockerfile: docker/Dockerfile.linux.arm64
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    username:
+      from_secret: docker_username
+  when:
+    event:
+      exclude:
+      - pull_request
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+---
+kind: pipeline
+type: docker
 name: linux-arm
 
 platform:
@@ -147,181 +196,6 @@ trigger:
 ---
 kind: pipeline
 type: docker
-name: linux-arm64
-
-platform:
-  os: linux
-  arch: arm64
-
-steps:
-- name: dryrun
-  pull: always
-  image: plugins/docker
-  settings:
-    dockerfile: docker/Dockerfile.linux.arm64
-    dry_run: true
-    password:
-      from_secret: docker_password
-    repo: plugins/base
-    tags: linux-arm64
-    username:
-      from_secret: docker_username
-  when:
-    event:
-    - pull_request
-
-- name: publish
-  pull: always
-  image: plugins/docker
-  settings:
-    auto_tag: true
-    auto_tag_suffix: linux-arm64
-    dockerfile: docker/Dockerfile.linux.arm64
-    password:
-      from_secret: docker_password
-    repo: plugins/base
-    username:
-      from_secret: docker_username
-  when:
-    event:
-      exclude:
-      - pull_request
-
-trigger:
-  ref:
-  - refs/heads/master
-  - refs/tags/**
-  - refs/pull/**
-
----
-kind: pipeline
-type: ssh
-name: windows-1903
-
-platform:
-  os: windows
-
-steps:
-- name: latest
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.1903 -t plugins/base:windows-1903-amd64 .
-  - docker push plugins/base:windows-1903-amd64
-  environment:
-    PASSWORD:
-      from_secret: docker_password
-    USERNAME:
-      from_secret: docker_username
-  when:
-    ref:
-    - refs/heads/master
-
-- name: tagged
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.1903 -t plugins/base:${DRONE_TAG##v}-windows-1903-amd64 .
-  - docker push plugins/base:${DRONE_TAG##v}-windows-1903-amd64
-  environment:
-    PASSWORD:
-      from_secret: docker_password
-    USERNAME:
-      from_secret: docker_username
-  when:
-    ref:
-    - refs/tags/**
-
-trigger:
-  ref:
-  - refs/heads/master
-  - refs/tags/**
-
----
-kind: pipeline
-type: ssh
-name: windows-1809
-
-platform:
-  os: windows
-
-steps:
-- name: latest
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.1809 -t plugins/base:windows-1809-amd64 .
-  - docker push plugins/base:windows-1809-amd64
-  environment:
-    PASSWORD:
-      from_secret: docker_password
-    USERNAME:
-      from_secret: docker_username
-  when:
-    ref:
-    - refs/heads/master
-
-- name: tagged
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.1809 -t plugins/base:${DRONE_TAG##v}-windows-1809-amd64 .
-  - docker push plugins/base:${DRONE_TAG##v}-windows-1809-amd64
-  environment:
-    PASSWORD:
-      from_secret: docker_password
-    USERNAME:
-      from_secret: docker_username
-  when:
-    ref:
-    - refs/tags/**
-
-trigger:
-  ref:
-  - refs/heads/master
-  - refs/tags/**
-
----
-kind: pipeline
-type: ssh
-name: windows-1803
-
-platform:
-  os: windows
-
-steps:
-- name: latest
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.1803 -t plugins/base:windows-1803-amd64 .
-  - docker push plugins/base:windows-1803-amd64
-  environment:
-    PASSWORD:
-      from_secret: docker_password
-    USERNAME:
-      from_secret: docker_username
-  when:
-    ref:
-    - refs/heads/master
-
-- name: tagged
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.1803 -t plugins/base:${DRONE_TAG##v}-windows-1803-amd64 .
-  - docker push plugins/base:${DRONE_TAG##v}-windows-1803-amd64
-  environment:
-    PASSWORD:
-      from_secret: docker_password
-    USERNAME:
-      from_secret: docker_username
-  when:
-    ref:
-    - refs/tags/**
-
-trigger:
-  ref:
-  - refs/heads/master
-  - refs/tags/**
-
----
-kind: pipeline
-type: docker
 name: manifest
 
 platform:
@@ -341,6 +215,13 @@ steps:
     username:
       from_secret: docker_username
 
+- name: microbadger
+  pull: always
+  image: plugins/webhook
+  settings:
+    urls:
+      from_secret: microbadger_url
+
 trigger:
   ref:
   - refs/heads/master
@@ -349,11 +230,8 @@ trigger:
 depends_on:
 - linux-multiarch
 - linux-amd64
-- linux-arm
 - linux-arm64
-- windows-1903
-- windows-1809
-- windows-1803
+- linux-arm
 
 ---
 kind: pipeline
@@ -364,6 +242,9 @@ platform:
   os: linux
   arch: amd64
 
+clone:
+  disable: true
+
 steps:
 - name: gitter
   pull: always
@@ -373,6 +254,10 @@ steps:
       from_secret: gitter_webhook
 
 trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
   status:
   - failure
 
@@ -380,10 +265,7 @@ depends_on:
 - manifest
 - linux-multiarch
 - linux-amd64
-- linux-arm
 - linux-arm64
-- windows-1903
-- windows-1809
-- windows-1803
+- linux-arm
 
 ...

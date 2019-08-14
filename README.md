@@ -6,7 +6,7 @@
 [![Drone questions at https://stackoverflow.com](https://img.shields.io/badge/drone-stackoverflow-orange.svg)](https://stackoverflow.com/questions/tagged/drone.io)
 [![](https://images.microbadger.com/badges/image/plugins/base.svg)](https://microbadger.com/images/plugins/base "Get your own image badge on microbadger.com")
 
-This repository is used to build the base images for our plugins. It just adds a general `/etc/ssl/certs/ca-certificates.crt` and `/etc/mime.types` to an Alpine or a Scratch image depending on the tag.
+This repository is used to build the base images for our plugins. On Linux it just adds a general `/etc/ssl/certs/ca-certificates.crt` and `/etc/mime.types` to an Alpine or a Scratch image depending on the tag. On Windows it targets the server core that corresponds with the version of Windows in use.
 
 ## Docker
 
@@ -40,6 +40,18 @@ docker build \
 docker build \
   --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
   --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
-  --file docker/Dockerfile.windows.amd64
-  --tag plugins/base:windows-amd64 .
+  --file docker/Dockerfile.windows.1803.amd64
+  --tag plugins/base:windows-1803-amd64 .
+
+docker build \
+  --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+  --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
+  --file docker/Dockerfile.windows.1809.amd64
+  --tag plugins/base:windows-1809-amd64 .
+
+docker build \
+  --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+  --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
+  --file docker/Dockerfile.windows.1903.amd64
+  --tag plugins/base:windows-1903-amd64 .
 ```

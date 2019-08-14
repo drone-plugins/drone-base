@@ -4,9 +4,9 @@ def main(ctx):
     linux('amd64'),
     linux('arm'),
     linux('arm64'),
-    windows('1903'),
-    windows('1809'),
-    windows('1803'),
+    # windows('1903'),
+    # windows('1809'),
+    # windows('1803'),
   ]
 
   after = manifest() + gitter()
@@ -256,6 +256,9 @@ def gitter():
     'kind': 'pipeline',
     'type': 'docker',
     'name': 'gitter',
+    'clone': {
+      'disable': True
+    },
     'steps': [
       {
         'name': 'gitter',

@@ -195,132 +195,6 @@ trigger:
 
 ---
 kind: pipeline
-type: ssh
-name: windows-1903
-
-platform:
-  os: windows
-
-steps:
-- name: latest
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.1903 -t plugins/base:windows-1903-amd64 .
-  - docker push plugins/base:windows-1903-amd64
-  environment:
-    PASSWORD:
-      from_secret: docker_password
-    USERNAME:
-      from_secret: docker_username
-  when:
-    ref:
-    - refs/heads/master
-
-- name: tagged
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.1903 -t plugins/base:${DRONE_TAG##v}-windows-1903-amd64 .
-  - docker push plugins/base:${DRONE_TAG##v}-windows-1903-amd64
-  environment:
-    PASSWORD:
-      from_secret: docker_password
-    USERNAME:
-      from_secret: docker_username
-  when:
-    ref:
-    - refs/tags/**
-
-trigger:
-  ref:
-  - refs/heads/master
-  - refs/tags/**
-
----
-kind: pipeline
-type: ssh
-name: windows-1809
-
-platform:
-  os: windows
-
-steps:
-- name: latest
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.1809 -t plugins/base:windows-1809-amd64 .
-  - docker push plugins/base:windows-1809-amd64
-  environment:
-    PASSWORD:
-      from_secret: docker_password
-    USERNAME:
-      from_secret: docker_username
-  when:
-    ref:
-    - refs/heads/master
-
-- name: tagged
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.1809 -t plugins/base:${DRONE_TAG##v}-windows-1809-amd64 .
-  - docker push plugins/base:${DRONE_TAG##v}-windows-1809-amd64
-  environment:
-    PASSWORD:
-      from_secret: docker_password
-    USERNAME:
-      from_secret: docker_username
-  when:
-    ref:
-    - refs/tags/**
-
-trigger:
-  ref:
-  - refs/heads/master
-  - refs/tags/**
-
----
-kind: pipeline
-type: ssh
-name: windows-1803
-
-platform:
-  os: windows
-
-steps:
-- name: latest
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.1803 -t plugins/base:windows-1803-amd64 .
-  - docker push plugins/base:windows-1803-amd64
-  environment:
-    PASSWORD:
-      from_secret: docker_password
-    USERNAME:
-      from_secret: docker_username
-  when:
-    ref:
-    - refs/heads/master
-
-- name: tagged
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.1803 -t plugins/base:${DRONE_TAG##v}-windows-1803-amd64 .
-  - docker push plugins/base:${DRONE_TAG##v}-windows-1803-amd64
-  environment:
-    PASSWORD:
-      from_secret: docker_password
-    USERNAME:
-      from_secret: docker_username
-  when:
-    ref:
-    - refs/tags/**
-
-trigger:
-  ref:
-  - refs/heads/master
-  - refs/tags/**
-
----
-kind: pipeline
 type: docker
 name: manifest
 
@@ -351,9 +225,6 @@ depends_on:
 - linux-amd64
 - linux-arm
 - linux-arm64
-- windows-1903
-- windows-1809
-- windows-1803
 
 ---
 kind: pipeline
@@ -363,6 +234,9 @@ name: gitter
 platform:
   os: linux
   arch: amd64
+
+clone:
+  disable: true
 
 steps:
 - name: gitter
@@ -382,8 +256,5 @@ depends_on:
 - linux-amd64
 - linux-arm
 - linux-arm64
-- windows-1903
-- windows-1809
-- windows-1803
 
 ...

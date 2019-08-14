@@ -1,5 +1,54 @@
 ---
 kind: pipeline
+type: docker
+name: linux-multiarch
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: dryrun
+  pull: always
+  image: plugins/docker
+  settings:
+    dockerfile: docker/Dockerfile.linux.multiarch
+    dry_run: true
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    tags: multiarch
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - pull_request
+
+- name: publish
+  pull: always
+  image: plugins/docker
+  settings:
+    dockerfile: docker/Dockerfile.linux.multiarch
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    tags: multiarch
+    username:
+      from_secret: docker_username
+  when:
+    event:
+      exclude:
+      - pull_request
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+---
+kind: pipeline
+type: docker
 name: linux-amd64
 
 platform:
@@ -9,7 +58,7 @@ platform:
 steps:
 - name: dryrun
   pull: always
-  image: plugins/docker:linux-amd64
+  image: plugins/docker
   settings:
     dockerfile: docker/Dockerfile.linux.amd64
     dry_run: true
@@ -25,7 +74,7 @@ steps:
 
 - name: publish
   pull: always
-  image: plugins/docker:linux-amd64
+  image: plugins/docker
   settings:
     auto_tag: true
     auto_tag_suffix: linux-amd64
@@ -37,59 +86,18 @@ steps:
       from_secret: docker_username
   when:
     event:
-    - push
+      exclude:
+      - pull_request
 
 trigger:
-  branch:
-  - master
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
 
 ---
 kind: pipeline
-name: linux-arm64
-
-platform:
-  os: linux
-  arch: arm64
-
-steps:
-- name: dryrun
-  pull: always
-  image: plugins/docker:linux-arm64
-  settings:
-    dockerfile: docker/Dockerfile.linux.arm64
-    dry_run: true
-    password:
-      from_secret: docker_password
-    repo: plugins/base
-    tags: linux-arm64
-    username:
-      from_secret: docker_username
-  when:
-    event:
-    - pull_request
-
-- name: publish
-  pull: always
-  image: plugins/docker:linux-arm64
-  settings:
-    auto_tag: true
-    auto_tag_suffix: linux-arm64
-    dockerfile: docker/Dockerfile.linux.arm64
-    password:
-      from_secret: docker_password
-    repo: plugins/base
-    username:
-      from_secret: docker_username
-  when:
-    event:
-    - push
-
-trigger:
-  branch:
-  - master
-
----
-kind: pipeline
+type: docker
 name: linux-arm
 
 platform:
@@ -99,7 +107,7 @@ platform:
 steps:
 - name: dryrun
   pull: always
-  image: plugins/docker:linux-arm
+  image: plugins/docker
   settings:
     dockerfile: docker/Dockerfile.linux.arm
     dry_run: true
@@ -115,7 +123,7 @@ steps:
 
 - name: publish
   pull: always
-  image: plugins/docker:linux-arm
+  image: plugins/docker
   settings:
     auto_tag: true
     auto_tag_suffix: linux-arm
@@ -127,32 +135,35 @@ steps:
       from_secret: docker_username
   when:
     event:
-    - push
+      exclude:
+      - pull_request
 
 trigger:
-  branch:
-  - master
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
 
 ---
 kind: pipeline
-name: linux-multiarch
+type: docker
+name: linux-arm64
 
 platform:
   os: linux
-  arch: amd64
+  arch: arm64
 
 steps:
 - name: dryrun
   pull: always
-  image: plugins/docker:linux-amd64
+  image: plugins/docker
   settings:
-    dockerfile: docker/Dockerfile.linux.multiarch
+    dockerfile: docker/Dockerfile.linux.arm64
     dry_run: true
     password:
       from_secret: docker_password
     repo: plugins/base
-    tags:
-    - multiarch
+    tags: linux-arm64
     username:
       from_secret: docker_username
   when:
@@ -161,27 +172,157 @@ steps:
 
 - name: publish
   pull: always
-  image: plugins/docker:linux-amd64
+  image: plugins/docker
   settings:
-    dockerfile: docker/Dockerfile.linux.multiarch
+    auto_tag: true
+    auto_tag_suffix: linux-arm64
+    dockerfile: docker/Dockerfile.linux.arm64
     password:
       from_secret: docker_password
     repo: plugins/base
-    tags:
-    - multiarch
     username:
       from_secret: docker_username
   when:
     event:
-    - push
+      exclude:
+      - pull_request
 
 trigger:
-  branch:
-  - master
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
 
 ---
 kind: pipeline
-name: notifications
+type: ssh
+name: windows-1903
+
+platform:
+  os: windows
+
+steps:
+- name: latest
+  commands:
+  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
+  - docker build --pull -f docker/Dockerfile.windows.1903 -t plugins/base:windows-1903-amd64 .
+  - docker push plugins/base:windows-1903-amd64
+  environment:
+    PASSWORD:
+      from_secret: docker_password
+    USERNAME:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/heads/master
+
+- name: tagged
+  commands:
+  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
+  - docker build --pull -f docker/Dockerfile.windows.1903 -t plugins/base:${DRONE_TAG##v}-windows-1903-amd64 .
+  - docker push plugins/base:${DRONE_TAG##v}-windows-1903-amd64
+  environment:
+    PASSWORD:
+      from_secret: docker_password
+    USERNAME:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/tags/**
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+
+---
+kind: pipeline
+type: ssh
+name: windows-1809
+
+platform:
+  os: windows
+
+steps:
+- name: latest
+  commands:
+  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
+  - docker build --pull -f docker/Dockerfile.windows.1809 -t plugins/base:windows-1809-amd64 .
+  - docker push plugins/base:windows-1809-amd64
+  environment:
+    PASSWORD:
+      from_secret: docker_password
+    USERNAME:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/heads/master
+
+- name: tagged
+  commands:
+  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
+  - docker build --pull -f docker/Dockerfile.windows.1809 -t plugins/base:${DRONE_TAG##v}-windows-1809-amd64 .
+  - docker push plugins/base:${DRONE_TAG##v}-windows-1809-amd64
+  environment:
+    PASSWORD:
+      from_secret: docker_password
+    USERNAME:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/tags/**
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+
+---
+kind: pipeline
+type: ssh
+name: windows-1803
+
+platform:
+  os: windows
+
+steps:
+- name: latest
+  commands:
+  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
+  - docker build --pull -f docker/Dockerfile.windows.1803 -t plugins/base:windows-1803-amd64 .
+  - docker push plugins/base:windows-1803-amd64
+  environment:
+    PASSWORD:
+      from_secret: docker_password
+    USERNAME:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/heads/master
+
+- name: tagged
+  commands:
+  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
+  - docker build --pull -f docker/Dockerfile.windows.1803 -t plugins/base:${DRONE_TAG##v}-windows-1803-amd64 .
+  - docker push plugins/base:${DRONE_TAG##v}-windows-1803-amd64
+  environment:
+    PASSWORD:
+      from_secret: docker_password
+    USERNAME:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/tags/**
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+
+---
+kind: pipeline
+type: docker
+name: manifest
 
 platform:
   os: linux
@@ -190,36 +331,59 @@ platform:
 steps:
 - name: manifest
   pull: always
-  image: plugins/manifest:1
+  image: plugins/manifest
   settings:
+    auto_tag: true
     ignore_missing: true
     password:
       from_secret: docker_password
     spec: docker/manifest.tmpl
     username:
       from_secret: docker_username
-  when:
-    event:
-    - push
-
-- name: microbadger
-  pull: always
-  image: plugins/webhook:1
-  settings:
-    url:
-      from_secret: microbadger_url
-  when:
-    event:
-    - push
 
 trigger:
-  branch:
-  - master
+  ref:
+  - refs/heads/master
+  - refs/tags/**
 
 depends_on:
-- linux-amd64
-- linux-arm64
-- linux-arm
 - linux-multiarch
+- linux-amd64
+- linux-arm
+- linux-arm64
+- windows-1903
+- windows-1809
+- windows-1803
+
+---
+kind: pipeline
+type: docker
+name: gitter
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: gitter
+  pull: always
+  image: plugins/gitter
+  settings:
+    webhook:
+      from_secret: gitter_webhook
+
+trigger:
+  status:
+  - failure
+
+depends_on:
+- manifest
+- linux-multiarch
+- linux-amd64
+- linux-arm
+- linux-arm64
+- windows-1903
+- windows-1809
+- windows-1803
 
 ...

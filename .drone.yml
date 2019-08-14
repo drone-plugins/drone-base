@@ -254,6 +254,10 @@ steps:
       from_secret: gitter_webhook
 
 trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
   status:
   - failure
 

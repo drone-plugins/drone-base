@@ -180,7 +180,7 @@ def windows(version):
         },
         'commands': [
           'echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin',
-          'docker build --pull -f docker/Dockerfile.windows.%s -t plugins/base:windows-%s-amd64 .' % (version, version),
+          'docker build --pull -f docker/Dockerfile.windows.%s.amd64 -t plugins/base:windows-%s-amd64 .' % (version, version),
           'docker push plugins/base:windows-%s-amd64' % version,
         ],
         'when': {
@@ -201,7 +201,7 @@ def windows(version):
         },
         'commands': [
           'echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin',
-          'docker build --pull -f docker/Dockerfile.windows.%s -t plugins/base:${DRONE_TAG##v}-windows-%s-amd64 .' % (version, version),
+          'docker build --pull -f docker/Dockerfile.windows.%s.amd64 -t plugins/base:${DRONE_TAG##v}-windows-%s-amd64 .' % (version, version),
           'docker push plugins/base:${DRONE_TAG##v}-windows-%s-amd64' % version,
         ],
         'when': {

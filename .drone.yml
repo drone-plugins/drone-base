@@ -98,55 +98,6 @@ trigger:
 ---
 kind: pipeline
 type: docker
-name: linux-arm
-
-platform:
-  os: linux
-  arch: arm
-
-steps:
-- name: dryrun
-  pull: always
-  image: plugins/docker
-  settings:
-    dockerfile: docker/Dockerfile.linux.arm
-    dry_run: true
-    password:
-      from_secret: docker_password
-    repo: plugins/base
-    tags: linux-arm
-    username:
-      from_secret: docker_username
-  when:
-    event:
-    - pull_request
-
-- name: publish
-  pull: always
-  image: plugins/docker
-  settings:
-    auto_tag: true
-    auto_tag_suffix: linux-arm
-    dockerfile: docker/Dockerfile.linux.arm
-    password:
-      from_secret: docker_password
-    repo: plugins/base
-    username:
-      from_secret: docker_username
-  when:
-    event:
-      exclude:
-      - pull_request
-
-trigger:
-  ref:
-  - refs/heads/master
-  - refs/tags/**
-  - refs/pull/**
-
----
-kind: pipeline
-type: docker
 name: linux-arm64
 
 platform:
@@ -177,6 +128,55 @@ steps:
     auto_tag: true
     auto_tag_suffix: linux-arm64
     dockerfile: docker/Dockerfile.linux.arm64
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    username:
+      from_secret: docker_username
+  when:
+    event:
+      exclude:
+      - pull_request
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+---
+kind: pipeline
+type: docker
+name: linux-arm
+
+platform:
+  os: linux
+  arch: arm
+
+steps:
+- name: dryrun
+  pull: always
+  image: plugins/docker
+  settings:
+    dockerfile: docker/Dockerfile.linux.arm
+    dry_run: true
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    tags: linux-arm
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - pull_request
+
+- name: publish
+  pull: always
+  image: plugins/docker
+  settings:
+    auto_tag: true
+    auto_tag_suffix: linux-arm
+    dockerfile: docker/Dockerfile.linux.arm
     password:
       from_secret: docker_password
     repo: plugins/base
@@ -230,8 +230,8 @@ trigger:
 depends_on:
 - linux-multiarch
 - linux-amd64
-- linux-arm
 - linux-arm64
+- linux-arm
 
 ---
 kind: pipeline
@@ -261,7 +261,7 @@ depends_on:
 - manifest
 - linux-multiarch
 - linux-amd64
-- linux-arm
 - linux-arm64
+- linux-arm
 
 ...

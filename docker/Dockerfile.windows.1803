@@ -1,9 +1,0 @@
-# escape=`
-FROM mcr.microsoft.com/windows/servercore:1803@sha256:5d6ed58d7f27598db7a61b7a38cd755fa8165ae726aff39f14aa52468f0248dd
-
-LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" `
-  org.label-schema.name="Drone Base" `
-  org.label-schema.vendor="Drone.IO Community" `
-  org.label-schema.schema-version="1.0"
-
-SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]

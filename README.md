@@ -16,42 +16,42 @@ Build the Docker images with the following commands:
 docker build \
   --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
   --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
-  --file docker/Dockerfile.linux.multiarch
+  --file docker/Dockerfile.linux.multiarch \
   --tag plugins/base:multiarch .
 
 docker build \
   --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
   --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
-  --file docker/Dockerfile.linux.amd64
+  --file docker/Dockerfile.linux.amd64 \
   --tag plugins/base:linux-amd64 .
 
 docker build \
   --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
   --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
-  --file docker/Dockerfile.linux.arm64
+  --file docker/Dockerfile.linux.arm64 \
   --tag plugins/base:linux-arm64 .
 
 docker build \
   --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
   --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
-  --file docker/Dockerfile.linux.arm
+  --file docker/Dockerfile.linux.arm \
   --tag plugins/base:linux-arm .
 
 docker build \
   --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
   --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
-  --file docker/Dockerfile.windows.1803.amd64
+  --file docker/Dockerfile.windows.1803.amd64 \
   --tag plugins/base:windows-1803-amd64 .
 
 docker build \
   --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
   --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
-  --file docker/Dockerfile.windows.1809.amd64
+  --file docker/Dockerfile.windows.1809.amd64 \
   --tag plugins/base:windows-1809-amd64 .
 
 docker build \
   --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
   --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
-  --file docker/Dockerfile.windows.1903.amd64
+  --file docker/Dockerfile.windows.1903.amd64 \
   --tag plugins/base:windows-1903-amd64 .
 ```

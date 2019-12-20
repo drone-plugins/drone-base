@@ -1,4 +1,4 @@
-FROM arm64v8/alpine:3.10@sha256:1827be57ca85c28287d18349bbfdb3870419692656cb67c4cd0f5042f0f63aec
+FROM arm64v8/alpine:3.11@sha256:aec3cf8ea78f690acc18450304f23e9dae4cc33d346597eb036e33a66d8da085
 RUN apk add --no-cache ca-certificates mailcap && \
 	echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 

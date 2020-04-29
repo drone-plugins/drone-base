@@ -1,5 +1,5 @@
 # escape=`
-FROM mcr.microsoft.com/powershell:nanoserver-1903@sha256:a875dc1ba40820683a9c00de1ef43a29e7f66b1efa0c6992fdb1713dbe10dc1c
+FROM mcr.microsoft.com/powershell:nanoserver-1903@sha256:e04e62b423919e1a336cce423854d2bc0a3c9b318dcccd52afa5782ed09756a0
 USER ContainerAdministrator
 
 LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" `

@@ -5,7 +5,7 @@
   "dockerfile": {
     "fileMatch": [
       "docker/Dockerfile\\.linux\\.(arm|arm64|amd64|multiarch)",
-      "docker/Dockerfile\\.windows\\.(1803|1809|1903)"
+      "docker/Dockerfile\\.windows\\.(1803|1809|1903|1909)"
     ],
     "pinDigests": true
   },

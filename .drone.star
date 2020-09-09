@@ -4,6 +4,7 @@ def main(ctx):
     linux('amd64'),
     linux('arm64'),
     linux('arm'),
+    windows('1909'),
     windows('1903'),
     windows('1809'),
   ]

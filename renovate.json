@@ -1,6 +1,11 @@
 {
   "extends": [
-    "config:base"
+    "config:base",
+    ":automergeMinor",
+    ":automergeDigest"
+  ],
+  "enabledManagers": [
+    "dockerfile"
   ],
   "dockerfile": {
     "fileMatch": [

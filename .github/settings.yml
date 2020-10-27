@@ -2,7 +2,7 @@ repository:
   name: drone-base
   description: Base image used by the plugins
   homepage:
-  topics: drone
+  topics: drone, drone-plugin
 
   private: false
   has_issues: true
@@ -69,7 +69,9 @@ branches:
           - continuous-integration/drone/pr
       enforce_admins: false
       restrictions:
+        apps:
+          - renovate
         users: []
         teams:
           - Admins
-          - Captain
+          - Maintainers

@@ -9,7 +9,7 @@ def main(ctx):
     windows('1809'),
   ]
 
-  after = manifest() + gitter()
+  after = manifest()
 
   for s in stages:
     for a in after:
@@ -240,16 +240,6 @@ def manifest():
           'spec': 'docker/manifest.tmpl',
           'ignore_missing': 'true',
         },
-      },
-      {
-        'name': 'microbadger',
-        'image': 'plugins/webhook',
-        'pull': 'always',
-        'settings': {
-          'urls': {
-            'from_secret': 'microbadger_url'
-          }
-        },
       }
     ],
     'depends_on': [],
@@ -257,41 +247,6 @@ def manifest():
       'ref': [
         'refs/heads/master',
         'refs/tags/**'
-      ]
-    }
-  }]
-
-def gitter():
-  return [{
-    'kind': 'pipeline',
-    'type': 'docker',
-    'name': 'gitter',
-    'clone': {
-      'disable': True
-    },
-    'steps': [
-      {
-        'name': 'gitter',
-        'image': 'plugins/gitter',
-        'pull': 'always',
-        'settings': {
-          'webhook': {
-            'from_secret': 'gitter_webhook'
-          }
-        },
-      },
-    ],
-    'depends_on': [
-      'manifest'
-    ],
-    'trigger': {
-      'ref': [
-        'refs/heads/master',
-        'refs/tags/**',
-        'refs/pull/**'
-      ],
-      'status': [
-        'failure'
       ]
     }
   }]

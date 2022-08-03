@@ -1,0 +1,10 @@
+FROM alpine:3.15@sha256:06c6c1449b733ddaf553c4c09dce5caf0618cb1c334b0bf62bbb5301ba411162
+RUN apk add --no-cache ca-certificates mailcap && \
+	echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+
+LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" \
+  org.label-schema.name="Drone Base" \
+  org.label-schema.vendor="Drone.IO Community" \
+  org.label-schema.schema-version="1.0"
+
+ENV GODEBUG=netdns=go

@@ -40,6 +40,12 @@ docker build \
 docker build \
   --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
   --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
+  --file docker/Dockerfile.linux.ppc64le \
+  --tag plugins/base:linux-ppc64le .
+
+docker build \
+  --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+  --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
   --file docker/Dockerfile.windows.1803.amd64 \
   --tag plugins/base:windows-1803-amd64 .
 

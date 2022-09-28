@@ -15,11 +15,6 @@ manifests:
       architecture: arm64
       os: linux
       variant: v8
-  - image: plugins/base:{{#if build.tag}}{{trimPrefix build.tag "v"}}-{{/if}}linux-arm
-    platform:
-      architecture: arm
-      os: linux
-      variant: v7
   - image: plugins/base:{{#if build.tag}}{{trimPrefix build.tag "v"}}-{{/if}}windows-2004-amd64
     platform:
       architecture: amd64

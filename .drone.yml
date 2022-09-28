@@ -1,0 +1,269 @@
+---
+kind: pipeline
+type: vm
+name: linux-multiarch
+
+pool:
+  use: ubuntu
+
+steps:
+- name: dryrun
+  pull: always
+  image: plugins/docker
+  settings:
+    dockerfile: docker/Dockerfile.linux.multiarch
+    dry_run: true
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    tags: multiarch
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - pull_request
+
+- name: publish
+  pull: always
+  image: plugins/docker
+  settings:
+    dockerfile: docker/Dockerfile.linux.multiarch
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    tags: multiarch
+    username:
+      from_secret: docker_username
+  when:
+    event:
+      exclude:
+      - pull_request
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+---
+kind: pipeline
+type: vm
+name: linux-amd64
+
+pool:
+  use: ubuntu
+
+steps:
+- name: dryrun
+  pull: always
+  image: plugins/docker
+  settings:
+    dockerfile: docker/Dockerfile.linux.amd64
+    dry_run: true
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    tags: linux-amd64
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - pull_request
+
+- name: publish
+  pull: always
+  image: plugins/docker
+  settings:
+    auto_tag: true
+    auto_tag_suffix: linux-amd64
+    dockerfile: docker/Dockerfile.linux.amd64
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    username:
+      from_secret: docker_username
+  when:
+    event:
+      exclude:
+      - pull_request
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+---
+kind: pipeline
+type: vm
+name: linux-arm64
+
+pool:
+  use: ubuntu_arm64
+
+steps:
+- name: dryrun
+  pull: always
+  image: plugins/docker
+  settings:
+    dockerfile: docker/Dockerfile.linux.arm64
+    dry_run: true
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    tags: linux-arm64
+    username:
+      from_secret: docker_username
+  when:
+    event:
+    - pull_request
+
+- name: publish
+  pull: always
+  image: plugins/docker
+  settings:
+    auto_tag: true
+    auto_tag_suffix: linux-arm64
+    dockerfile: docker/Dockerfile.linux.arm64
+    password:
+      from_secret: docker_password
+    repo: plugins/base
+    username:
+      from_secret: docker_username
+  when:
+    event:
+      exclude:
+      - pull_request
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+---
+kind: pipeline
+type: vm
+name: windows-1809
+
+platform:
+  os: windows
+
+pool:
+  use: windows
+
+steps:
+- name: latest
+  commands:
+  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
+  - docker build --pull -f docker/Dockerfile.windows.1809 -t plugins/base:windows-1809-amd64 .
+  - docker push plugins/base:windows-1809-amd64
+  environment:
+    PASSWORD:
+      from_secret: docker_password
+    USERNAME:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/heads/master
+
+- name: tagged
+  commands:
+  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
+  - docker build --pull -f docker/Dockerfile.windows.1809 -t plugins/base:${DRONE_TAG##v}-windows-1809-amd64 .
+  - docker push plugins/base:${DRONE_TAG##v}-windows-1809-amd64
+  environment:
+    PASSWORD:
+      from_secret: docker_password
+    USERNAME:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/tags/**
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+
+---
+kind: pipeline
+type: vm
+name: windows-ltsc2022
+
+platform:
+  os: windows
+
+pool:
+  use: windows-2022
+
+steps:
+- name: latest
+  commands:
+  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
+  - docker build --pull -f docker/Dockerfile.windows.ltsc2022 -t plugins/base:windows-ltsc2022-amd64 .
+  - docker push plugins/base:windows-ltsc2022-amd64
+  environment:
+    PASSWORD:
+      from_secret: docker_password
+    USERNAME:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/heads/master
+
+- name: tagged
+  commands:
+  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
+  - docker build --pull -f docker/Dockerfile.windows.ltsc2022 -t plugins/base:${DRONE_TAG##v}-windows-ltsc2022-amd64 .
+  - docker push plugins/base:${DRONE_TAG##v}-windows-ltsc2022-amd64
+  environment:
+    PASSWORD:
+      from_secret: docker_password
+    USERNAME:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/tags/**
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+
+---
+kind: pipeline
+type: vm
+name: manifest
+
+platform:
+  os: linux
+  arch: amd64
+
+pool:
+  use: ubuntu
+
+steps:
+- name: manifest
+  pull: always
+  image: plugins/manifest
+  settings:
+    auto_tag: true
+    ignore_missing: true
+    password:
+      from_secret: docker_password
+    spec: docker/manifest.tmpl
+    username:
+      from_secret: docker_username
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+
+depends_on:
+- linux-multiarch
+- linux-amd64
+- linux-arm64
+- windows-1809
+- windows-ltsc2022

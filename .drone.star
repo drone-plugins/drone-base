@@ -7,6 +7,7 @@ def main(ctx):
     windows('1909'),
     windows('1903'),
     windows('1809'),
+    windows('ltsc2022'),
   ]
 
   after = manifest()

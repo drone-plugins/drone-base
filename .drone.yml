@@ -153,33 +153,21 @@ pool:
   use: windows
 
 steps:
-- name: latest
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.1809 -t plugins/base:windows-1809-amd64 .
-  - docker push plugins/base:windows-1809-amd64
-  environment:
-    PASSWORD:
+- name: publish
+  pull: always
+  image: plugins/docker
+  settings:
+    auto_tag: true
+    auto_tag_suffix: windows-1809-amd64
+    dockerfile: docker/Dockerfile.windows.1809
+    password:
       from_secret: docker_password
-    USERNAME:
+    repo: plugins/base
+    username:
       from_secret: docker_username
-  when:
-    ref:
-    - refs/heads/master
-
-- name: tagged
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.1809 -t plugins/base:${DRONE_TAG##v}-windows-1809-amd64 .
-  - docker push plugins/base:${DRONE_TAG##v}-windows-1809-amd64
-  environment:
-    PASSWORD:
-      from_secret: docker_password
-    USERNAME:
-      from_secret: docker_username
-  when:
-    ref:
-    - refs/tags/**
+    # Windows specific
+    daemon_off: true
+    purge: false
 
 trigger:
   ref:
@@ -198,33 +186,21 @@ pool:
   use: windows-2022
 
 steps:
-- name: latest
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.ltsc2022 -t plugins/base:windows-ltsc2022-amd64 .
-  - docker push plugins/base:windows-ltsc2022-amd64
-  environment:
-    PASSWORD:
+- name: publish
+  pull: always
+  image: plugins/docker
+  settings:
+    auto_tag: true
+    auto_tag_suffix: windows-ltsc2022-amd64
+    dockerfile: docker/Dockerfile.windows.ltsc2022
+    password:
       from_secret: docker_password
-    USERNAME:
+    repo: plugins/base
+    username:
       from_secret: docker_username
-  when:
-    ref:
-    - refs/heads/master
-
-- name: tagged
-  commands:
-  - echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin
-  - docker build --pull -f docker/Dockerfile.windows.ltsc2022 -t plugins/base:${DRONE_TAG##v}-windows-ltsc2022-amd64 .
-  - docker push plugins/base:${DRONE_TAG##v}-windows-ltsc2022-amd64
-  environment:
-    PASSWORD:
-      from_secret: docker_password
-    USERNAME:
-      from_secret: docker_username
-  when:
-    ref:
-    - refs/tags/**
+    # Windows specific
+    daemon_off: true
+    purge: false
 
 trigger:
   ref:

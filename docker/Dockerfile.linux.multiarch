@@ -1,4 +1,4 @@
-FROM alpine:3.19@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b as alpine
+FROM alpine:3.24@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a as alpine
 RUN apk add --no-cache ca-certificates mailcap
 
 FROM scratch

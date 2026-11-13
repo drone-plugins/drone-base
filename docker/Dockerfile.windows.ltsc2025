@@ -17,7 +17,7 @@
 # Stage 1: download and extract PowerShell 7 on servercore.
 # servercore ships Windows PowerShell 5.1, which we use to run Invoke-WebRequest
 # and Expand-Archive to fetch the standalone PS7 ZIP release from GitHub.
-FROM mcr.microsoft.com/windows/servercore:ltsc2025 AS installer-env
+FROM mcr.microsoft.com/windows/servercore:ltsc2025@sha256:a43c2d41a3d6e940dec865731e2f5db5c3e03f705f5300ef0b5817d3e01ecfb1 AS installer-env
 SHELL ["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command"]
 RUN $ProgressPreference = 'SilentlyContinue'; `
     [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12; `
@@ -25,7 +25,7 @@ RUN $ProgressPreference = 'SilentlyContinue'; `
     Expand-Archive C:\powershell.zip -DestinationPath C:\PowerShell
 
 # Stage 2: final nanoserver image with PowerShell 7 copied in.
-FROM mcr.microsoft.com/windows/nanoserver:ltsc2025
+FROM mcr.microsoft.com/windows/nanoserver:ltsc2025@sha256:5c42e42b31816a3a7619cb71b4f14353793a47293e198dbde8fe4fce2c8935cb
 USER ContainerAdministrator
 
 LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" `
